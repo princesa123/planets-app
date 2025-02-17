@@ -7,6 +7,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
 
+  // Chama o inicio do banco de dados
   DatabaseHelper._init();
 
   Future<Database> get database async {
@@ -15,6 +16,7 @@ class DatabaseHelper {
     return _database!;
   }
 
+  // Inicia o banco procurando dados na memória
   Future<Database> initDatabase(String filePath) async {
     if (filePath == ':memory:') {
       return await openDatabase(filePath, version: 1, onCreate: _createDB);
@@ -30,6 +32,7 @@ class DatabaseHelper {
     db.close();
   }
 
+  // Cria a tabela do banco
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE planets (
@@ -42,11 +45,13 @@ class DatabaseHelper {
     ''');
   }
 
+  // Adiciona um planeta no banco
   Future<int> insertPlanet(Planet planet) async {
     final db = await instance.database;
     return await db.insert('planets', planet.toMap());
   }
 
+  // Lista os planetas do banco
   Future<List<Planet>> getPlanets() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query('planets');
@@ -56,6 +61,7 @@ class DatabaseHelper {
     return maps.map((map) => Planet.fromMap(map)).toList();
   }
 
+  // Lista os planetas do banco
   Future<List<Planet>> getAllPlanets() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query('planets');
@@ -72,6 +78,7 @@ class DatabaseHelper {
     );
   }
 
+  // Apaga um planeta do banco
   Future<int> deletePlanet(int id) async {
     final db = await instance.database;
     return await db.delete('planets', where: 'id = ?', whereArgs: [id]);

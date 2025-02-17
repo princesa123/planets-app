@@ -7,6 +7,7 @@ import 'view_models/planet_view_model.dart';
 void main() {
   runApp(
     MultiProvider(
+      // Adiciona o contexto para mudar os dados dinamicamente
       providers: [
         ChangeNotifierProvider(
           create: (context) => PlanetProvider()..fetchPlanets(),
@@ -17,6 +18,7 @@ void main() {
   );
 }
 
+// Lista para as rotas da aplicação
 final Map<String, WidgetBuilder> routes = {
   '/add-planet': (context) => PlanetFormScreen(),
 };
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      // Define a tela inicial da aplicação e adiciona as rotas
       home: HomeScreen(),
       routes: routes,
     );

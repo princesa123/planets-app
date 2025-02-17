@@ -1,3 +1,4 @@
+// Classe para salvar e pegar planetas do banco
 class Planet {
   int? id;
   String name;

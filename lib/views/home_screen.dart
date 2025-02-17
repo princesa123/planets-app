@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         future: _planetsFuture, // Usa o Future armazenado
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            //  Mostra o loading caso a tela não tenha totalmente carregado
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // Trata erros
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Consumer<PlanetProvider>(
               builder: (context, planetProvider, child) {
                 return planetProvider.planets.isEmpty
+                    // Mensagem para lista vazia
                     ? Center(child: Text('Nenhum planeta cadastrado.'))
                     : ListView.builder(
                       itemCount: planetProvider.planets.length,
@@ -43,20 +45,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         final planet = planetProvider.planets[index];
                         return ListTile(
                           title: Text(planet.name),
+                          // Comparação para checar se o apelido existe
                           subtitle: Text(planet.nickname ?? 'Sem apelido'),
+                          // Evento que chama a tela de detalhes
                           onTap: () => _navigateToDetail(planet),
                           trailing: Wrap(
                             spacing: 6,
                             children: <Widget>[
+                              // Botão que chama a função para tela de editar
                               IconButton(
                                 icon: Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () => _editPlanet(context, planet),
-                              ), // icon-1
+                              ),
+                              // Botão que chama a modal para apagar
                               IconButton(
                                 icon: Icon(Icons.delete, color: Colors.red),
                                 onPressed:
                                     () => _confirmDelete(context, planet.id!),
-                              ), // icon-2
+                              ),
                             ],
                           ),
                         );
@@ -67,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
+      // Botão que chama a tela de adicionar
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _addPlanet(context),
@@ -74,37 +81,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Função que navega para tela de detalhes e que recebe os dados do planeta para mostrar
   void _navigateToDetail(Planet planet) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PlanetDetailScreen(planet: planet),
       ),
+      // Função encadeada que executará quando o usuário voltar
     ).then(
       (_) => Provider.of<PlanetProvider>(context, listen: false).fetchPlanets(),
     );
   }
 
+  // Função que navega para tela de adicionar
   void _addPlanet(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PlanetFormScreen()),
+      // Função encadeada que executará quando o usuário voltar
     ).then((_) {
       // Atualiza a lista após adicionar
       Provider.of<PlanetProvider>(context, listen: false).fetchPlanets();
     });
   }
 
+  // Função que navega para tela de editar
   void _editPlanet(BuildContext context, Planet planet) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PlanetFormScreen(planet: planet)),
+      // Função encadeada que executará quando o usuário voltar
     ).then((_) {
       // Atualiza a lista após editar
       Provider.of<PlanetProvider>(context, listen: false).fetchPlanets();
     });
   }
 
+  // Função que abre a dialog de confirmação de exclusão
   void _confirmDelete(BuildContext context, int id) {
     showDialog(
       context: context,

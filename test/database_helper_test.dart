@@ -1,21 +1,22 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:myapp/services/database_helper.dart'; // Importe o caminho correto
+import 'package:myapp/services/database_helper.dart';
 import 'package:myapp/models/planet.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  // Inicia o banco para testes
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  late DatabaseHelper dbHelper; // Declare dbHelper aqui
+  late DatabaseHelper dbHelper;
 
   setUp(() async {
-    dbHelper = DatabaseHelper.instance; // Inicialize dbHelper no setUp
+    dbHelper = DatabaseHelper.instance;
   });
 
   tearDown(() async {
-    await dbHelper.closeDatabase(); // Use dbHelper para fechar o banco
+    // Encerra o banco para testes
+    await dbHelper.closeDatabase();
   });
 
   test('Insere um planeta e verifica se foi salvo corretamente', () async {
@@ -26,12 +27,14 @@ void main() {
       nickname: 'Azul',
     );
 
+    // Atualiza no banco
     int id = await dbHelper.insertPlanet(planet);
     expect(id, isNonZero);
 
-    final planets = await dbHelper.getAllPlanets(); // Use getAllPlanets
+    // Verifica se o planeta retornado é o mesmo inserido
+    final planets = await dbHelper.getAllPlanets();
     expect(planets.length, 1);
-    expect(planets.first.id, id); // Verifique se o ID inserido corresponde
+    expect(planets.first.id, id);
     expect(planets.first.name, 'Terra');
   });
 
@@ -42,18 +45,23 @@ void main() {
       size: 6779,
       nickname: 'Vermelho',
     );
+    // Insere no banco
     int id = await dbHelper.insertPlanet(planet);
     expect(id, isNonZero);
 
+    // Cria outro com mesmo ID
     final updatedPlanet = Planet(
-      id: id, // Use o ID retornado por insertPlanet
+      id: id,
       name: 'Marte',
       distance: 1.52,
       size: 6800,
       nickname: 'Planeta Vermelho',
     );
+
+    // Atualiza no banco
     await dbHelper.updatePlanet(updatedPlanet);
 
+    // Verifica se o planeta retornado é o mesmo inserido
     final planets = await dbHelper.getAllPlanets();
     expect(planets.length, 1);
     expect(planets.first.distance, 1.52);
@@ -67,10 +75,13 @@ void main() {
       size: 139820,
       nickname: 'Gigante',
     );
+    // Insere no banco
     int id = await dbHelper.insertPlanet(planet);
     expect(id, isNonZero);
 
-    await dbHelper.deletePlanet(id); // Use o ID retornado por insertPlanet
+    // Apaga no banco
+    await dbHelper.deletePlanet(id);
+    // Tenta encontrar no banco
     final planets = await dbHelper.getAllPlanets();
     expect(planets.isEmpty, true);
   });

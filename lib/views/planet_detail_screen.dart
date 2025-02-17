@@ -3,7 +3,7 @@ import '../models/planet.dart';
 
 class PlanetDetailScreen extends StatelessWidget {
   final Planet planet;
-
+  // Criação da tela básica para ver os dados
   const PlanetDetailScreen({Key? key, required this.planet}) : super(key: key);
 
   @override
@@ -14,6 +14,7 @@ class PlanetDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          // Linhas de dados do planeta
           children: [
             Text(
               'Nome: ${planet.name}',
